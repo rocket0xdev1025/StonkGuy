@@ -98,6 +98,121 @@
         radial-gradient(ellipse at 50% 120%, rgba(0, 20, 60, 0.85), transparent 50%);
     }
 
+    .sg-orbs {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .sg-orbs i {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.7;
+      animation: orbdrift 22s ease-in-out infinite;
+    }
+
+    .sg-orbs i:nth-child(1) {
+      width: 460px;
+      height: 460px;
+      background: rgba(0, 255, 102, 0.1);
+      top: -8%;
+      left: -12%;
+    }
+
+    .sg-orbs i:nth-child(2) {
+      width: 520px;
+      height: 520px;
+      background: rgba(18, 90, 220, 0.2);
+      top: 38%;
+      right: -18%;
+      animation-delay: -8s;
+    }
+
+    .sg-orbs i:nth-child(3) {
+      width: 340px;
+      height: 340px;
+      background: rgba(0, 255, 102, 0.07);
+      bottom: -10%;
+      left: 30%;
+      animation-delay: -14s;
+    }
+
+    @keyframes orbdrift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      40% { transform: translate(6%, 8%) scale(1.12); }
+      70% { transform: translate(-4%, 4%) scale(0.94); }
+    }
+
+    #sg-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0;
+      z-index: 90;
+      background: linear-gradient(90deg, #00ff66, #7eb8ff);
+      box-shadow: 0 0 12px rgba(0, 255, 102, 0.8);
+      pointer-events: none;
+    }
+
+    #sg-pointer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      margin: -11px 0 0 -11px;
+      border: 1px solid rgba(0, 255, 102, 0.7);
+      border-radius: 50%;
+      z-index: 200;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0;
+      transition: width 0.18s ease, height 0.18s ease, margin 0.18s ease, background 0.18s ease, opacity 0.2s ease;
+      box-shadow: 0 0 12px rgba(0, 255, 102, 0.35);
+    }
+
+    #sg-pointer.visible { opacity: 1; }
+
+    #sg-pointer.on {
+      width: 44px;
+      height: 44px;
+      margin: -22px 0 0 -22px;
+      background: rgba(0, 255, 102, 0.08);
+      border-color: rgba(0, 255, 102, 1);
+    }
+
+    #sg-pointer .dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      margin: -2px 0 0 -2px;
+      border-radius: 50%;
+      background: var(--neon);
+      box-shadow: 0 0 8px var(--neon);
+    }
+
+    .sg-tick-fx {
+      position: fixed;
+      z-index: 180;
+      pointer-events: none;
+      color: var(--neon);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-shadow: 0 0 10px var(--neon);
+      animation: tickup 0.85s ease forwards;
+    }
+
+    @keyframes tickup {
+      to { transform: translateY(-42px); opacity: 0; }
+    }
+
     #sg-board {
       position: fixed;
       inset: -12% -8% 0;
@@ -167,6 +282,7 @@
       height: 34px;
       display: flex;
       align-items: center;
+      animation: dropIn 0.55s cubic-bezier(.16,1,.3,1) both;
     }
 
     .sg-tape-track {
@@ -193,10 +309,49 @@
       to { transform: translateX(-50%); }
     }
 
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: none; }
+    }
+
     .sg-nav {
       background: rgba(6, 20, 40, 0.78);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--line);
+      animation: dropIn 0.7s cubic-bezier(.16,1,.3,1) 0.08s both;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .sg-nav.scrolled {
+      background: rgba(4, 13, 28, 0.92);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+
+    .sg-nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .sg-nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 1px;
+      background: var(--neon);
+      box-shadow: 0 0 8px var(--neon);
+      transition: width 0.28s cubic-bezier(.16,1,.3,1);
+    }
+
+    .sg-nav-link:hover,
+    .sg-nav-link.is-active {
+      color: var(--neon);
+    }
+
+    .sg-nav-link:hover::after,
+    .sg-nav-link.is-active::after {
+      width: 100%;
     }
 
     .sg-btn-buy {
@@ -205,11 +360,14 @@
       background: linear-gradient(180deg, #5dff9a 0%, #00ff66 40%, #00c853 100%);
       color: #042014;
       box-shadow: 0 0 0 1px rgba(0,255,102,0.4), 0 8px 28px rgba(0,255,102,0.28);
+      transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
       transition: transform 0.18s ease, box-shadow 0.18s ease;
+      animation: buypulse 2.6s ease-in-out infinite;
     }
 
     .sg-btn-buy:hover {
-      transform: translateY(-2px) scale(1.02);
+      animation-play-state: paused;
+      transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) - 2px), 0) scale(1.03);
       box-shadow: 0 0 0 1px rgba(0,255,102,0.7), 0 12px 36px rgba(0,255,102,0.45);
     }
 
@@ -229,16 +387,22 @@
       to { transform: translateX(120%); }
     }
 
+    @keyframes buypulse {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(0,255,102,0.4), 0 8px 28px rgba(0,255,102,0.28); }
+      50% { box-shadow: 0 0 0 1px rgba(0,255,102,0.75), 0 10px 42px rgba(0,255,102,0.5); }
+    }
+
     .sg-btn-chart {
       background: rgba(18, 58, 122, 0.55);
       border: 1px solid rgba(0, 255, 102, 0.45);
       color: var(--neon);
       box-shadow: inset 0 0 20px rgba(0,255,102,0.05);
+      transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
       transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
     }
 
     .sg-btn-chart:hover {
-      transform: translateY(-2px);
+      transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) - 2px), 0);
       background: rgba(0, 255, 102, 0.1);
       box-shadow: 0 0 24px rgba(0,255,102,0.2);
     }
@@ -249,15 +413,15 @@
       min-height: 100svh;
       display: flex;
       align-items: center;
+      overflow: hidden;
     }
 
     .sg-hero-bg {
       position: absolute;
-      inset: 0;
+      inset: -6%;
       z-index: -2;
-      background:
-        url("banner.jpg") center center / cover no-repeat;
-      transform: scale(1.04);
+      background: url("banner.jpg") center center / cover no-repeat;
+      will-change: transform;
     }
 
     .sg-hero-shade {
@@ -267,6 +431,51 @@
       background:
         linear-gradient(90deg, rgba(4, 12, 28, 0.94) 0%, rgba(6, 20, 40, 0.72) 38%, rgba(6, 20, 40, 0.28) 68%, rgba(4, 12, 28, 0.45) 100%),
         linear-gradient(180deg, rgba(4, 12, 28, 0.35) 0%, transparent 28%, rgba(4, 12, 28, 0.82) 100%);
+    }
+
+    .sg-scanlines {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.08) 3px,
+        rgba(0, 0, 0, 0.08) 4px
+      );
+      opacity: 0.35;
+      mix-blend-mode: multiply;
+    }
+
+    .sg-arrows {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .sg-arrows span {
+      position: absolute;
+      color: var(--neon);
+      font-size: 22px;
+      font-weight: 700;
+      text-shadow: 0 0 16px var(--neon);
+      opacity: 0;
+      animation: arrowfly 5.4s ease-in infinite;
+    }
+
+    .sg-arrows span:nth-child(1) { left: 58%; top: 72%; animation-delay: 0.2s; }
+    .sg-arrows span:nth-child(2) { left: 72%; top: 64%; animation-delay: 1.6s; font-size: 16px; }
+    .sg-arrows span:nth-child(3) { left: 84%; top: 78%; animation-delay: 3.1s; font-size: 28px; }
+    .sg-arrows span:nth-child(4) { left: 66%; top: 82%; animation-delay: 4.4s; font-size: 14px; }
+
+    @keyframes arrowfly {
+      0% { opacity: 0; transform: translate(0, 0) scale(0.6); }
+      12% { opacity: 0.85; }
+      100% { opacity: 0; transform: translate(90px, -160px) scale(1.15); }
     }
 
     .sg-live {
@@ -301,12 +510,72 @@
       line-height: 0.88;
       text-transform: uppercase;
       text-shadow: 0 8px 40px rgba(0,0,0,0.55);
+      perspective: 500px;
+    }
+
+    .sg-word {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.06em;
+    }
+
+    .sg-title .ch {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(1.15em) rotateX(-80deg);
+      animation: charIn 0.78s cubic-bezier(.16,1,.3,1) forwards;
+      animation-delay: calc(0.28s + var(--i) * 0.055s);
+    }
+
+    @keyframes charIn {
+      to { opacity: 1; transform: none; }
     }
 
     .sg-symbol {
+      position: relative;
       font-family: "IBM Plex Mono", monospace;
       color: var(--neon);
       text-shadow: 0 0 18px rgba(0,255,102,0.45);
+      animation: neonflicker 4.5s ease-in-out infinite;
+    }
+
+    .sg-symbol::before,
+    .sg-symbol::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .sg-symbol::before {
+      color: #7eb8ff;
+      animation: glitchA 3.6s steps(2, end) infinite;
+    }
+
+    .sg-symbol::after {
+      color: #00ff66;
+      animation: glitchB 4.2s steps(2, end) infinite;
+    }
+
+    @keyframes glitchA {
+      0%, 88%, 100% { transform: none; opacity: 0; clip-path: inset(0 0 0 0); }
+      89% { transform: translate(-3px, 1px); opacity: 0.8; clip-path: inset(10% 0 60% 0); }
+      91% { transform: translate(3px, -1px); opacity: 0.6; clip-path: inset(50% 0 10% 0); }
+      93% { opacity: 0; }
+    }
+
+    @keyframes glitchB {
+      0%, 72%, 100% { transform: none; opacity: 0; }
+      73% { transform: translate(3px, -2px); opacity: 0.7; }
+      75% { transform: translate(-2px, 1px); opacity: 0.4; }
+      77% { opacity: 0; }
+    }
+
+    @keyframes neonflicker {
+      0%, 19%, 21%, 100% { opacity: 1; text-shadow: 0 0 18px rgba(0,255,102,0.45); }
+      20% { opacity: 0.55; text-shadow: none; }
     }
 
     .sg-logo-ring {
@@ -314,7 +583,7 @@
         0 0 0 2px rgba(0,255,102,0.85),
         0 0 28px rgba(0,255,102,0.45),
         0 12px 40px rgba(0,0,0,0.45);
-      animation: ring 3.4s ease-in-out infinite;
+      animation: ring 3.4s ease-in-out infinite, floaty 4.4s ease-in-out infinite;
     }
 
     @keyframes ring {
@@ -322,51 +591,87 @@
       50% { box-shadow: 0 0 0 3px rgba(0,255,102,1), 0 0 42px rgba(0,255,102,0.7), 0 12px 40px rgba(0,0,0,0.45); }
     }
 
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-9px); }
+    }
+
     .sg-card {
+      --rx: 0deg;
+      --ry: 0deg;
+      position: relative;
       background: linear-gradient(180deg, rgba(16, 48, 96, 0.55), rgba(8, 24, 52, 0.72));
       border: 1px solid rgba(126, 184, 255, 0.2);
       box-shadow: 0 16px 50px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
       backdrop-filter: blur(12px);
+      transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+      transform-style: preserve-3d;
+      transition: transform 0.18s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .sg-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: radial-gradient(420px circle at var(--spot-x, 50%) var(--spot-y, 0%), rgba(0,255,102,0.16), transparent 42%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
 
     .sg-card:hover {
-      border-color: rgba(0, 255, 102, 0.45);
-      box-shadow: 0 18px 50px rgba(0,255,102,0.08), inset 0 1px 0 rgba(255,255,255,0.08);
+      border-color: rgba(0, 255, 102, 0.55);
+      box-shadow: 0 18px 50px rgba(0,255,102,0.1), inset 0 1px 0 rgba(255,255,255,0.08);
     }
+
+    .sg-card:hover::before { opacity: 1; }
 
     .sg-hud {
       position: relative;
     }
 
-    .sg-hud::before,
-    .sg-hud::after {
-      content: "";
+    .sg-hud .hud-tl,
+    .sg-hud .hud-br {
       position: absolute;
       width: 18px;
       height: 18px;
       border: 2px solid var(--neon);
       opacity: 0.7;
       pointer-events: none;
+      z-index: 2;
     }
 
-    .sg-hud::before {
-      top: -1px;
-      left: -1px;
+    .sg-hud .hud-tl {
+      top: 0;
+      left: 0;
       border-right: 0;
       border-bottom: 0;
+      animation: huddraw 0.7s cubic-bezier(.16,1,.3,1) both;
     }
 
-    .sg-hud::after {
-      bottom: -1px;
-      right: -1px;
+    .sg-hud .hud-br {
+      bottom: 0;
+      right: 0;
       border-left: 0;
       border-top: 0;
+      animation: huddraw 0.7s cubic-bezier(.16,1,.3,1) 0.12s both;
+    }
+
+    @keyframes huddraw {
+      from { width: 0; height: 0; opacity: 0; }
+      to { width: 18px; height: 18px; opacity: 0.7; }
     }
 
     .sg-ca {
       background: rgba(4, 13, 28, 0.72);
       border: 1px solid rgba(0, 255, 102, 0.28);
       box-shadow: inset 0 0 24px rgba(0,255,102,0.04);
+      animation: capulse 3.2s ease-in-out infinite;
+    }
+
+    @keyframes capulse {
+      0%, 100% { border-color: rgba(0, 255, 102, 0.28); }
+      50% { border-color: rgba(0, 255, 102, 0.7); }
     }
 
     .sg-step {
@@ -380,12 +685,68 @@
       line-height: 1;
       color: rgba(0, 255, 102, 0.12);
       letter-spacing: -0.04em;
+      transform-origin: left center;
+    }
+
+    .sg-step.in .num {
+      animation: numPop 0.85s cubic-bezier(.2,1.4,.3,1) both;
+    }
+
+    @keyframes numPop {
+      from { transform: scale(0.6) translateY(12px); opacity: 0; color: rgba(0,255,102,0); }
+      to { transform: none; opacity: 1; color: rgba(0, 255, 102, 0.12); }
+    }
+
+    .sg-steps-rail {
+      display: none;
+    }
+
+    @media (min-width: 1280px) {
+      .sg-steps-wrap { position: relative; }
+      .sg-steps-rail {
+        display: block;
+        position: absolute;
+        top: 38px;
+        left: 6%;
+        right: 6%;
+        height: 2px;
+        background: rgba(0, 255, 102, 0.18);
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .sg-steps-rail i {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, transparent, var(--neon), var(--neon), transparent);
+        box-shadow: 0 0 12px var(--neon);
+        transition: width 1.4s cubic-bezier(.16,1,.3,1);
+      }
+      .sg-steps-wrap.in .sg-steps-rail i { width: 100%; }
+      .sg-steps-wrap .grid { position: relative; z-index: 1; }
     }
 
     .sg-terminal {
       background: #07101e;
       border: 1px solid rgba(126, 184, 255, 0.22);
       box-shadow: 0 30px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,255,102,0.08);
+    }
+
+    .sg-scan {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 90px;
+      background: linear-gradient(180deg, transparent, rgba(0,255,102,0.07), transparent);
+      pointer-events: none;
+      animation: scanmove 3.8s linear infinite;
+      z-index: 2;
+    }
+
+    @keyframes scanmove {
+      from { top: -90px; }
+      to { top: 100%; }
     }
 
     .sg-dots span {
@@ -397,17 +758,138 @@
 
     .reveal {
       opacity: 0;
-      transform: translateY(28px);
-      animation: reveal 0.8s ease forwards;
+      translate: 0 36px;
+      filter: blur(8px);
+      transition:
+        opacity 0.85s cubic-bezier(.16,1,.3,1),
+        translate 0.85s cubic-bezier(.16,1,.3,1),
+        scale 0.85s cubic-bezier(.16,1,.3,1),
+        filter 0.85s cubic-bezier(.16,1,.3,1);
+      transition-delay: var(--d, 0ms);
     }
 
-    .reveal-d1 { animation-delay: 0.08s; }
-    .reveal-d2 { animation-delay: 0.16s; }
-    .reveal-d3 { animation-delay: 0.24s; }
-    .reveal-d4 { animation-delay: 0.32s; }
+    .reveal.r-left { translate: -36px 0; }
+    .reveal.r-right { translate: 36px 0; }
+    .reveal.r-scale { translate: 0 0; scale: 0.94; }
 
-    @keyframes reveal {
-      to { opacity: 1; transform: none; }
+    .reveal.in {
+      opacity: 1;
+      translate: 0 0;
+      scale: 1;
+      filter: none;
+    }
+
+    .sg-kicker-line {
+      display: inline-block;
+      width: 0;
+      height: 1px;
+      margin-left: 12px;
+      background: var(--neon);
+      box-shadow: 0 0 8px var(--neon);
+      vertical-align: middle;
+      transition: width 0.9s cubic-bezier(.16,1,.3,1) 0.2s;
+    }
+
+    .reveal.in .sg-kicker-line { width: 72px; }
+
+    .sg-spark path {
+      fill: none;
+      stroke: var(--neon);
+      stroke-width: 2;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      filter: drop-shadow(0 0 6px var(--neon));
+    }
+
+    .reveal.in .sg-spark path {
+      animation: drawline 1.15s ease forwards 0.15s;
+    }
+
+    @keyframes drawline {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .sg-bars rect {
+      transform-box: fill-box;
+      transform-origin: bottom;
+      transform: scaleY(0.08);
+    }
+
+    .reveal.in .sg-bars rect {
+      animation: growBar 0.7s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .reveal.in .sg-bars rect:nth-child(1) { animation-delay: 0.15s; }
+    .reveal.in .sg-bars rect:nth-child(2) { animation-delay: 0.28s; }
+    .reveal.in .sg-bars rect:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes growBar {
+      to { transform: scaleY(1); }
+    }
+
+    .sg-moon-path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+
+    .reveal.in .sg-moon-path {
+      animation: drawline 1.1s ease forwards 0.2s;
+    }
+
+    .sg-stats {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(4, 13, 28, 0.55);
+      backdrop-filter: blur(10px);
+    }
+
+    .sg-stat {
+      position: relative;
+    }
+
+    .sg-stat + .sg-stat::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18%;
+      bottom: 18%;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(0,255,102,0.45), transparent);
+    }
+
+    .sg-stat .val {
+      font-family: Oswald, sans-serif;
+      letter-spacing: 0.08em;
+      background: linear-gradient(180deg, #ffffff, #00ff66);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .sg-grid-line {
+      background-image:
+        linear-gradient(rgba(126,184,255,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126,184,255,0.07) 1px, transparent 1px);
+      background-size: 48px 48px;
+      animation: gridmove 22s linear infinite;
+    }
+
+    @keyframes gridmove {
+      to { background-position: 48px 48px; }
+    }
+
+    .sg-heading {
+      background: linear-gradient(90deg, #ffffff 0%, #e8f1ff 40%, #00ff66 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: sheen 6s ease-in-out infinite;
+    }
+
+    @keyframes sheen {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .sg-toast {
@@ -436,13 +918,6 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    .sg-spark path {
-      fill: none;
-      stroke: var(--neon);
-      stroke-width: 2;
-      filter: drop-shadow(0 0 6px var(--neon));
-    }
-
     .sg-section-kicker {
       font-family: "IBM Plex Mono", monospace;
       font-size: 11px;
@@ -451,20 +926,31 @@
       text-transform: uppercase;
     }
 
-    .sg-grid-line {
-      background-image:
-        linear-gradient(rgba(126,184,255,0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(126,184,255,0.07) 1px, transparent 1px);
-      background-size: 48px 48px;
+    .sg-blink {
+      display: inline-block;
+      width: 7px;
+      height: 1em;
+      margin-left: 4px;
+      background: var(--neon);
+      vertical-align: text-bottom;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
     }
 
     .sg-mobile-buy {
       padding-bottom: env(safe-area-inset-bottom);
     }
 
+    #menu-btn .ico {
+      transition: opacity 0.2s ease;
+    }
+
     @media (max-width: 768px) {
       #sg-board { opacity: 0.16; transform: perspective(700px) rotateX(10deg) scale(1.3); }
-      .sg-hero { min-height: auto; padding-top: 1.5rem; }
+      .sg-hero { min-height: auto; padding-top: 1.5rem; padding-bottom: 6.5rem; }
       .sg-hero-shade {
         background:
           linear-gradient(180deg, rgba(4,12,28,0.35) 0%, rgba(4,12,28,0.55) 40%, rgba(4,12,28,0.94) 78%);
@@ -472,19 +958,42 @@
       .sg-title { letter-spacing: 0.04em; }
       .sg-toast { bottom: 92px; }
       footer { padding-bottom: 108px; }
+      #sg-pointer { display: none; }
+      .sg-arrows { display: none; }
+      .sg-stat + .sg-stat::before { display: none; }
+      .sg-blink { display: none; }
+      .sg-live { letter-spacing: 0.14em; }
+    }
+
+    @media (pointer: coarse) {
+      #sg-pointer { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .sg-tape-track, .sg-logo-ring, .sg-live i, .reveal, .sg-btn-buy::after {
+      *, *::before, *::after {
         animation: none !important;
+        transition: none !important;
       }
-      .reveal { opacity: 1; transform: none; }
+      .sg-tape-track { animation: tape 42s linear infinite !important; }
+      .reveal, .sg-title .ch {
+        opacity: 1 !important;
+        transform: none !important;
+        translate: none !important;
+        scale: none !important;
+        filter: none !important;
+      }
+      .sg-spark path, .sg-moon-path { stroke-dashoffset: 0 !important; }
+      .sg-bars rect { transform: none !important; }
+      #sg-pointer, .sg-tick-fx, .sg-arrows, .sg-orbs { display: none !important; }
     }
   </style>
 </head>
 <body class="relative overflow-x-hidden antialiased">
+  <div id="sg-progress" aria-hidden="true"></div>
+  <div id="sg-pointer" aria-hidden="true"><span class="dot"></span></div>
   <div id="sg-board" aria-hidden="true"></div>
   <canvas id="sg-candles" aria-hidden="true"></canvas>
+  <div class="sg-orbs" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="sg-noise" aria-hidden="true"></div>
   <div class="sg-vignette" aria-hidden="true"></div>
 
@@ -536,10 +1045,10 @@
       </a>
 
       <nav class="hidden items-center gap-8 text-sm font-medium text-tick md:flex">
-        <a href="#about" class="hover:text-neon transition">Thesis</a>
-        <a href="#buy" class="hover:text-neon transition">How to Buy</a>
-        <a href="#chart" class="hover:text-neon transition">Chart</a>
-        <a href="#community" class="hover:text-neon transition">Floor</a>
+        <a href="#about" class="sg-nav-link hover:text-neon">Thesis</a>
+        <a href="#buy" class="sg-nav-link hover:text-neon">How to Buy</a>
+        <a href="#chart" class="sg-nav-link hover:text-neon">Chart</a>
+        <a href="#community" class="sg-nav-link hover:text-neon">Floor</a>
       </nav>
 
       <div class="flex items-center gap-2 sm:gap-3">
@@ -549,12 +1058,12 @@
         <a href="https://x.com/StonkGuySol" target="_blank" rel="noopener noreferrer" class="hidden sm:grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-black ring-1 ring-white/15 hover:ring-neon/70 hover:scale-105 transition" aria-label="X / Twitter">
           <img src="x.png" alt="" class="h-10 w-10 object-cover" />
         </a>
-        <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-buy inline-flex items-center gap-2 rounded-sm px-4 py-2.5 font-display text-sm tracking-[0.18em]">
+        <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-buy sg-magnetic inline-flex items-center gap-2 rounded-sm px-4 py-2.5 font-display text-sm tracking-[0.18em]">
           BUY NOW
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 10 L10 2 M4 2 H10 V8" stroke="currentColor" stroke-width="1.8"/></svg>
         </a>
         <button id="menu-btn" class="grid h-10 w-10 place-items-center rounded-sm border border-white/15 text-white md:hidden" aria-label="Open menu" aria-expanded="false">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" stroke-width="1.6"/></svg>
+          <svg class="ico" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" stroke-width="1.6"/></svg>
         </button>
       </div>
     </div>
@@ -580,37 +1089,45 @@
   <main id="main" class="relative z-10">
     <!-- HERO -->
     <section id="top" class="sg-hero">
-      <div class="sg-hero-bg"></div>
+      <div class="sg-hero-bg" id="hero-bg"></div>
       <div class="sg-hero-shade"></div>
+      <div class="sg-scanlines" aria-hidden="true"></div>
+      <div class="sg-arrows" aria-hidden="true"><span>▲</span><span>▲</span><span>▲</span><span>+</span></div>
 
       <div class="mx-auto w-full max-w-7xl px-4 py-16 md:px-6 md:py-24">
-        <div class="max-w-2xl reveal">
-          <div class="sg-live mb-6">
+        <div class="max-w-2xl">
+          <div class="sg-live mb-6 reveal" style="--d:60ms">
             <i></i>
             Live · 24/7 stonk session · Always open
+            <span class="sg-blink" aria-hidden="true"></span>
           </div>
 
-          <div class="mb-6 flex items-center gap-5">
+          <div class="mb-6 flex items-center gap-5 reveal" style="--d:120ms">
             <img src="logo.jpg" alt="Stonk Guy" class="sg-logo-ring h-20 w-20 rounded-full object-cover sm:h-28 sm:w-28" />
             <div>
               <p class="font-mono text-[11px] tracking-[0.32em] text-sand">MEME EQUITY · SOLANA</p>
-              <h1 class="sg-title text-6xl sm:text-7xl md:text-8xl text-white">
-                STONK<br />GUY
+              <h1 class="sg-title text-6xl sm:text-7xl md:text-8xl text-white" aria-label="Stonk Guy">
+                <span class="sg-word">
+                  <span class="ch" style="--i:0">S</span><span class="ch" style="--i:1">T</span><span class="ch" style="--i:2">O</span><span class="ch" style="--i:3">N</span><span class="ch" style="--i:4">K</span>
+                </span>
+                <span class="sg-word">
+                  <span class="ch" style="--i:5">G</span><span class="ch" style="--i:6">U</span><span class="ch" style="--i:7">Y</span>
+                </span>
               </h1>
-              <p class="sg-symbol mt-2 text-lg tracking-[0.35em]">$STONKGUY</p>
+              <p class="sg-symbol mt-2 text-lg tracking-[0.35em]" data-text="$STONKGUY">$STONKGUY</p>
             </div>
           </div>
 
-          <p class="max-w-xl text-base leading-relaxed text-blue-100/90 sm:text-lg">
+          <p class="max-w-xl text-base leading-relaxed text-blue-100/90 sm:text-lg reveal" style="--d:220ms">
             Stonk Guy is built different—buying dips, chasing green candles, and sending Solana memes straight to the moon!
           </p>
 
-          <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-buy inline-flex items-center justify-center gap-2 rounded-sm px-8 py-4 font-display text-xl tracking-[0.2em]">
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center reveal" style="--d:320ms">
+            <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-buy sg-magnetic inline-flex items-center justify-center gap-2 rounded-sm px-8 py-4 font-display text-xl tracking-[0.2em]">
               BUY NOW
               <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1 11 L11 1 M5 1 H11 V7" stroke="currentColor" stroke-width="1.8"/></svg>
             </a>
-            <a href="https://dexscreener.com/solana/EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-chart inline-flex items-center justify-center gap-2 rounded-sm px-8 py-4 font-display text-xl tracking-[0.2em]">
+            <a href="https://dexscreener.com/solana/EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-chart sg-magnetic inline-flex items-center justify-center gap-2 rounded-sm px-8 py-4 font-display text-xl tracking-[0.2em]">
               CHART
               <svg width="16" height="14" viewBox="0 0 16 14" fill="none" aria-hidden="true">
                 <path d="M1 10 L5 6 L8 8 L15 1" stroke="currentColor" stroke-width="1.8"/>
@@ -620,7 +1137,9 @@
           </div>
 
           <!-- CA copy -->
-          <div class="sg-ca sg-hud mt-8 rounded-sm p-4">
+          <div class="sg-ca sg-hud mt-8 rounded-sm p-4 reveal" style="--d:420ms">
+            <span class="hud-tl" aria-hidden="true"></span>
+            <span class="hud-br" aria-hidden="true"></span>
             <div class="mb-2 flex items-center justify-between gap-3">
               <span class="font-mono text-[10px] tracking-[0.28em] text-tick">CONTRACT ADDRESS · SOLANA</span>
               <span class="font-mono text-[10px] tracking-[0.2em] text-neon">AVAILABLE CA</span>
@@ -636,23 +1155,47 @@
       </div>
     </section>
 
+    <!-- Stats -->
+    <section class="sg-stats relative z-10" aria-label="Desk stats">
+      <div class="mx-auto grid max-w-7xl grid-cols-2 md:grid-cols-4">
+        <div class="sg-stat px-4 py-7 text-center md:px-6">
+          <div class="val text-4xl sm:text-5xl">▲ <span data-count="420.69" data-decimals="2">0</span>%</div>
+          <p class="mt-1 font-mono text-[10px] tracking-[0.28em] text-tick">ATH VIBES</p>
+        </div>
+        <div class="sg-stat px-4 py-7 text-center md:px-6">
+          <div class="val text-4xl sm:text-5xl">24/7</div>
+          <p class="mt-1 font-mono text-[10px] tracking-[0.28em] text-tick">DESK HOURS</p>
+        </div>
+        <div class="sg-stat px-4 py-7 text-center md:px-6">
+          <div class="val text-4xl sm:text-5xl">SOL</div>
+          <p class="mt-1 font-mono text-[10px] tracking-[0.28em] text-tick">CHAIN</p>
+        </div>
+        <div class="sg-stat px-4 py-7 text-center md:px-6">
+          <div class="val text-4xl sm:text-5xl">ONLY ▲</div>
+          <p class="mt-1 font-mono text-[10px] tracking-[0.28em] text-tick">DIRECTION</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Quote / thesis -->
     <section id="about" class="relative py-20 md:py-28">
       <div class="mx-auto max-w-7xl px-4 md:px-6">
         <div class="mb-12 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p class="sg-section-kicker mb-3">// 01 · Market thesis</p>
-            <h2 class="font-display text-4xl tracking-[0.12em] text-white sm:text-5xl">BUILT DIFFERENT.</h2>
+          <div class="reveal">
+            <p class="sg-section-kicker mb-3">// 01 · Market thesis <span class="sg-kicker-line"></span></p>
+            <h2 class="sg-heading font-display text-4xl tracking-[0.12em] sm:text-5xl">BUILT DIFFERENT.</h2>
           </div>
-          <p class="max-w-md text-sm text-tick md:text-right">
+          <p class="max-w-md text-sm text-tick md:text-right reveal r-right" style="--d:120ms">
             Not a sleepy blue-chip. A Solana meme desk that treats every dip like a gift and every green candle like a destiny.
           </p>
         </div>
 
         <div class="grid gap-5 md:grid-cols-3">
-          <article class="sg-card sg-hud rounded-sm p-6 reveal">
+          <article class="sg-card sg-hud sg-tilt rounded-sm p-6 reveal">
+            <span class="hud-tl" aria-hidden="true"></span>
+            <span class="hud-br" aria-hidden="true"></span>
             <svg class="sg-spark mb-5 h-10 w-28" viewBox="0 0 112 40" aria-hidden="true">
-              <path d="M2 28 L18 30 L32 18 L46 22 L62 10 L78 14 L96 4 L110 8" />
+              <path pathLength="1" d="M2 28 L18 30 L32 18 L46 22 L62 10 L78 14 L96 4 L110 8" />
             </svg>
             <p class="font-mono text-[10px] tracking-[0.28em] text-neon">01 · ACCUMULATE</p>
             <h3 class="mt-2 font-display text-3xl tracking-[0.08em] text-white">BUY THE DIP</h3>
@@ -661,8 +1204,10 @@
             </p>
           </article>
 
-          <article class="sg-card sg-hud rounded-sm p-6 reveal reveal-d1">
-            <svg class="mb-5 h-10 w-10 text-neon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <article class="sg-card sg-hud sg-tilt rounded-sm p-6 reveal" style="--d:120ms">
+            <span class="hud-tl" aria-hidden="true"></span>
+            <span class="hud-br" aria-hidden="true"></span>
+            <svg class="sg-bars mb-5 h-10 w-10 text-neon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
               <rect x="6" y="22" width="6" height="12" fill="#00ff66"/>
               <rect x="17" y="12" width="6" height="22" fill="#00ff66"/>
               <rect x="28" y="6" width="6" height="28" fill="#00ff66"/>
@@ -675,10 +1220,12 @@
             </p>
           </article>
 
-          <article class="sg-card sg-hud rounded-sm p-6 reveal reveal-d2">
+          <article class="sg-card sg-hud sg-tilt rounded-sm p-6 reveal" style="--d:240ms">
+            <span class="hud-tl" aria-hidden="true"></span>
+            <span class="hud-br" aria-hidden="true"></span>
             <svg class="mb-5 h-10 w-10 text-neon" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-              <path d="M6 34 L20 10 L26 18 L36 4" stroke="#00ff66" stroke-width="2.4"/>
-              <path d="M28 4 H36 V12" stroke="#00ff66" stroke-width="2.4"/>
+              <path class="sg-moon-path" pathLength="1" d="M6 34 L20 10 L26 18 L36 4" stroke="#00ff66" stroke-width="2.4"/>
+              <path class="sg-moon-path" pathLength="1" d="M28 4 H36 V12" stroke="#00ff66" stroke-width="2.4"/>
               <circle cx="32" cy="32" r="5" stroke="#7eb8ff" stroke-width="1.6"/>
             </svg>
             <p class="font-mono text-[10px] tracking-[0.28em] text-neon">03 · DESTINATION</p>
@@ -694,72 +1241,75 @@
     <!-- How to buy -->
     <section id="buy" class="relative py-20 md:py-28 sg-grid-line">
       <div class="mx-auto max-w-7xl px-4 md:px-6">
-        <div class="mb-12">
-          <p class="sg-section-kicker mb-3">// 02 · Execution</p>
-          <h2 class="font-display text-4xl tracking-[0.12em] text-white sm:text-5xl">HOW TO BUY $STONKGUY</h2>
+        <div class="mb-12 reveal">
+          <p class="sg-section-kicker mb-3">// 02 · Execution <span class="sg-kicker-line"></span></p>
+          <h2 class="sg-heading font-display text-4xl tracking-[0.12em] sm:text-5xl">HOW TO BUY $STONKGUY</h2>
           <p class="mt-4 max-w-2xl text-blue-100/80">
             Four tickets. One desk. Buy $STONKGUY on Solana with SOL — from wallet to green candle in minutes.
           </p>
         </div>
 
-        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <article class="sg-card sg-step rounded-sm p-6 reveal">
-            <div class="flex items-start justify-between">
-              <span class="font-mono text-[10px] tracking-[0.24em] text-neon">TICKET 01</span>
-              <span class="rounded-sm bg-neon/15 px-2 py-0.5 font-mono text-[10px] tracking-[0.16em] text-neon">OPEN</span>
-            </div>
-            <div class="num">01</div>
-            <h3 class="font-display text-2xl tracking-[0.1em] text-white">GET A WALLET</h3>
-            <p class="mt-3 text-sm leading-relaxed text-blue-100/80">
-              Install
-              <a href="https://phantom.app" target="_blank" rel="noopener noreferrer" class="text-neon underline-offset-2 hover:underline">Phantom</a>
-              or
-              <a href="https://solflare.com" target="_blank" rel="noopener noreferrer" class="text-neon underline-offset-2 hover:underline">Solflare</a>.
-              That wallet is your stonk terminal — the only desk you need on Solana.
-            </p>
-          </article>
+        <div class="sg-steps-wrap">
+          <div class="sg-steps-rail" aria-hidden="true"><i></i></div>
+          <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <article class="sg-card sg-step sg-tilt rounded-sm p-6 reveal">
+              <div class="flex items-start justify-between">
+                <span class="font-mono text-[10px] tracking-[0.24em] text-neon">TICKET 01</span>
+                <span class="rounded-sm bg-neon/15 px-2 py-0.5 font-mono text-[10px] tracking-[0.16em] text-neon">OPEN</span>
+              </div>
+              <div class="num">01</div>
+              <h3 class="font-display text-2xl tracking-[0.1em] text-white">GET A WALLET</h3>
+              <p class="mt-3 text-sm leading-relaxed text-blue-100/80">
+                Install
+                <a href="https://phantom.app" target="_blank" rel="noopener noreferrer" class="text-neon underline-offset-2 hover:underline">Phantom</a>
+                or
+                <a href="https://solflare.com" target="_blank" rel="noopener noreferrer" class="text-neon underline-offset-2 hover:underline">Solflare</a>.
+                That wallet is your stonk terminal — the only desk you need on Solana.
+              </p>
+            </article>
 
-          <article class="sg-card sg-step rounded-sm p-6 reveal reveal-d1">
-            <div class="flex items-start justify-between">
-              <span class="font-mono text-[10px] tracking-[0.24em] text-neon">TICKET 02</span>
-              <span class="rounded-sm bg-neon/15 px-2 py-0.5 font-mono text-[10px] tracking-[0.16em] text-neon">FUND</span>
-            </div>
-            <div class="num">02</div>
-            <h3 class="font-display text-2xl tracking-[0.1em] text-white">LOAD SOL</h3>
-            <p class="mt-3 text-sm leading-relaxed text-blue-100/80">
-              Buy SOL on any major exchange and send it to your wallet. Fees are tiny. Dips are cheaper. Keep a little extra SOL for the swap.
-            </p>
-          </article>
+            <article class="sg-card sg-step sg-tilt rounded-sm p-6 reveal" style="--d:100ms">
+              <div class="flex items-start justify-between">
+                <span class="font-mono text-[10px] tracking-[0.24em] text-neon">TICKET 02</span>
+                <span class="rounded-sm bg-neon/15 px-2 py-0.5 font-mono text-[10px] tracking-[0.16em] text-neon">FUND</span>
+              </div>
+              <div class="num">02</div>
+              <h3 class="font-display text-2xl tracking-[0.1em] text-white">LOAD SOL</h3>
+              <p class="mt-3 text-sm leading-relaxed text-blue-100/80">
+                Buy SOL on any major exchange and send it to your wallet. Fees are tiny. Dips are cheaper. Keep a little extra SOL for the swap.
+              </p>
+            </article>
 
-          <article class="sg-card sg-step rounded-sm p-6 reveal reveal-d2">
-            <div class="flex items-start justify-between">
-              <span class="font-mono text-[10px] tracking-[0.24em] text-neon">TICKET 03</span>
-              <span class="rounded-sm bg-neon/15 px-2 py-0.5 font-mono text-[10px] tracking-[0.16em] text-neon">ROUTE</span>
-            </div>
-            <div class="num">03</div>
-            <h3 class="font-display text-2xl tracking-[0.1em] text-white">OPEN THE SWAP</h3>
-            <p class="mt-3 text-sm leading-relaxed text-blue-100/80">
-              Hit
-              <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="text-neon underline-offset-2 hover:underline">Buy Now</a>
-              to open Pump.fun. Connect the wallet. Confirm the route is SOL → $STONKGUY. Paste the CA if you want extra certainty.
-            </p>
-          </article>
+            <article class="sg-card sg-step sg-tilt rounded-sm p-6 reveal" style="--d:200ms">
+              <div class="flex items-start justify-between">
+                <span class="font-mono text-[10px] tracking-[0.24em] text-neon">TICKET 03</span>
+                <span class="rounded-sm bg-neon/15 px-2 py-0.5 font-mono text-[10px] tracking-[0.16em] text-neon">ROUTE</span>
+              </div>
+              <div class="num">03</div>
+              <h3 class="font-display text-2xl tracking-[0.1em] text-white">OPEN THE SWAP</h3>
+              <p class="mt-3 text-sm leading-relaxed text-blue-100/80">
+                Hit
+                <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="text-neon underline-offset-2 hover:underline">Buy Now</a>
+                to open Pump.fun. Connect the wallet. Confirm the route is SOL → $STONKGUY. Paste the CA if you want extra certainty.
+              </p>
+            </article>
 
-          <article class="sg-card sg-step rounded-sm p-6 reveal reveal-d3">
-            <div class="flex items-start justify-between">
-              <span class="font-mono text-[10px] tracking-[0.24em] text-neon">TICKET 04</span>
-              <span class="rounded-sm bg-neon px-2 py-0.5 font-mono text-[10px] tracking-[0.16em] text-navy">FILL</span>
-            </div>
-            <div class="num">04</div>
-            <h3 class="font-display text-2xl tracking-[0.1em] text-white">BUY THE STONK</h3>
-            <p class="mt-3 text-sm leading-relaxed text-blue-100/80">
-              Swap SOL for $STONKGUY, confirm the transaction, and you are on the floor. Welcome to the desk — you are Stonk Guy now.
-            </p>
-          </article>
+            <article class="sg-card sg-step sg-tilt rounded-sm p-6 reveal" style="--d:300ms">
+              <div class="flex items-start justify-between">
+                <span class="font-mono text-[10px] tracking-[0.24em] text-neon">TICKET 04</span>
+                <span class="rounded-sm bg-neon px-2 py-0.5 font-mono text-[10px] tracking-[0.16em] text-navy">FILL</span>
+              </div>
+              <div class="num">04</div>
+              <h3 class="font-display text-2xl tracking-[0.1em] text-white">BUY THE STONK</h3>
+              <p class="mt-3 text-sm leading-relaxed text-blue-100/80">
+                Swap SOL for $STONKGUY, confirm the transaction, and you are on the floor. Welcome to the desk — you are Stonk Guy now.
+              </p>
+            </article>
+          </div>
         </div>
 
-        <div class="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-          <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-buy inline-flex items-center gap-2 rounded-sm px-8 py-4 font-display text-xl tracking-[0.2em]">
+        <div class="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center reveal" style="--d:160ms">
+          <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-buy sg-magnetic inline-flex items-center gap-2 rounded-sm px-8 py-4 font-display text-xl tracking-[0.2em]">
             BUY $STONKGUY
           </a>
           <p class="font-mono text-xs tracking-[0.14em] text-tick">
@@ -773,20 +1323,20 @@
     <section id="chart" class="relative py-20 md:py-28">
       <div class="mx-auto max-w-7xl px-4 md:px-6">
         <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p class="sg-section-kicker mb-3">// 03 · Tape</p>
-            <h2 class="font-display text-4xl tracking-[0.12em] text-white sm:text-5xl">LIVE CHART</h2>
+          <div class="reveal">
+            <p class="sg-section-kicker mb-3">// 03 · Tape <span class="sg-kicker-line"></span></p>
+            <h2 class="sg-heading font-display text-4xl tracking-[0.12em] sm:text-5xl">LIVE CHART</h2>
             <p class="mt-3 max-w-xl text-sm text-blue-100/80">
               Watch the board. Green is the only color Stonk Guy respects.
             </p>
           </div>
-          <a href="https://dexscreener.com/solana/EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-chart inline-flex items-center gap-2 rounded-sm px-6 py-3 font-display tracking-[0.18em]">
+          <a href="https://dexscreener.com/solana/EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump" target="_blank" rel="noopener noreferrer" class="sg-btn-chart sg-magnetic inline-flex items-center gap-2 rounded-sm px-6 py-3 font-display tracking-[0.18em] reveal r-right">
             OPEN DEXSCREENER
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 10 L10 2 M4 2 H10 V8" stroke="currentColor" stroke-width="1.8"/></svg>
           </a>
         </div>
 
-        <div class="sg-terminal overflow-hidden rounded-sm">
+        <div class="sg-terminal overflow-hidden rounded-sm reveal r-scale">
           <div class="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
             <div class="flex items-center gap-3">
               <div class="sg-dots flex gap-1.5" aria-hidden="true">
@@ -798,7 +1348,8 @@
             </div>
             <span class="hidden font-mono text-[11px] tracking-[0.16em] text-neon sm:inline">EMBED LIVE</span>
           </div>
-          <div class="relative bg-[#0b1220]">
+          <div class="relative bg-[#0b1220] overflow-hidden">
+            <div class="sg-scan" aria-hidden="true"></div>
             <iframe
               title="Dexscreener chart for $STONKGUY"
               src="https://dexscreener.com/solana/EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump?embed=1&loadChartSettings=0&trades=0&tabs=0&info=0&chartLeftToolbar=0&chartDefaultOnMobile=1&chartTheme=dark&theme=dark&chartStyle=1&chartType=usd&interval=15"
@@ -813,23 +1364,25 @@
     <!-- Community -->
     <section id="community" class="relative py-20 md:py-28">
       <div class="mx-auto max-w-7xl px-4 md:px-6">
-        <p class="sg-section-kicker mb-3">// 04 · The floor</p>
-        <h2 class="font-display text-4xl tracking-[0.12em] text-white sm:text-5xl">JOIN THE DESK</h2>
-        <p class="mt-4 max-w-2xl text-blue-100/80">
-          Stonk Guy is built different—buying dips, chasing green candles, and sending Solana memes straight to the moon. Get on the tape.
-        </p>
+        <div class="reveal">
+          <p class="sg-section-kicker mb-3">// 04 · The floor <span class="sg-kicker-line"></span></p>
+          <h2 class="sg-heading font-display text-4xl tracking-[0.12em] sm:text-5xl">JOIN THE DESK</h2>
+          <p class="mt-4 max-w-2xl text-blue-100/80">
+            Stonk Guy is built different—buying dips, chasing green candles, and sending Solana memes straight to the moon. Get on the tape.
+          </p>
+        </div>
 
         <div class="mt-10 grid gap-5 md:grid-cols-2">
-          <a href="https://t.me/StonkGuySol" target="_blank" rel="noopener noreferrer" class="sg-card group flex items-center gap-5 rounded-sm p-6 transition hover:-translate-y-1">
-            <img src="tg.png" alt="" class="h-16 w-16 rounded-full ring-2 ring-white/10 group-hover:ring-neon/70 transition" />
+          <a href="https://t.me/StonkGuySol" target="_blank" rel="noopener noreferrer" class="sg-card sg-tilt group flex items-center gap-5 rounded-sm p-6 reveal">
+            <img src="tg.png" alt="" class="h-16 w-16 rounded-full ring-2 ring-white/10 group-hover:ring-neon/70 transition group-hover:scale-110" />
             <div>
               <p class="font-mono text-[10px] tracking-[0.28em] text-tick">TELEGRAM</p>
               <p class="font-display text-3xl tracking-[0.1em] text-white">T.ME/STONKGUYSOL</p>
               <p class="mt-1 text-sm text-blue-100/70">Live desk chat. Dips called. Candles celebrated.</p>
             </div>
           </a>
-          <a href="https://x.com/StonkGuySol" target="_blank" rel="noopener noreferrer" class="sg-card group flex items-center gap-5 rounded-sm p-6 transition hover:-translate-y-1">
-            <img src="x.png" alt="" class="h-16 w-16 rounded-full object-cover ring-2 ring-white/10 group-hover:ring-neon/70 transition" />
+          <a href="https://x.com/StonkGuySol" target="_blank" rel="noopener noreferrer" class="sg-card sg-tilt group flex items-center gap-5 rounded-sm p-6 reveal" style="--d:120ms">
+            <img src="x.png" alt="" class="h-16 w-16 rounded-full object-cover ring-2 ring-white/10 group-hover:ring-neon/70 transition group-hover:scale-110" />
             <div>
               <p class="font-mono text-[10px] tracking-[0.28em] text-tick">X / TWITTER</p>
               <p class="font-display text-3xl tracking-[0.1em] text-white">@STONKGUYSOL</p>
@@ -874,6 +1427,8 @@
 
   <script>
     const CA = "EcZMqqYxFdcKSMMEYuacVoaeeRxpc7R7G7zWma9zpump";
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     const QUOTES = [
       ["1.286", "+0.9%", "up"],
       ["0.12%", "+1.75%", "up"],
@@ -926,9 +1481,9 @@
 
     function drawCandles() {
       const canvas = document.getElementById("sg-candles");
-      if (!canvas) return;
+      if (!canvas || reduced) return;
       const ctx = canvas.getContext("2d");
-      let w, h, candles, t = 0;
+      let w, h, candles, t = 0, raf = 0, running = true;
 
       function resize() {
         w = canvas.width = window.innerWidth;
@@ -941,7 +1496,7 @@
       }
 
       function tick() {
-        if (!candles) return;
+        if (!candles || !running) return;
         t += 0.016;
         const last = candles[candles.length - 1];
         const drift = 0.002 + Math.sin(t * 0.7) * 0.004;
@@ -986,11 +1541,16 @@
           ctx.fillRect(x - cw * 0.22, top, cw * 0.44, bh);
         });
 
-        requestAnimationFrame(tick);
+        raf = requestAnimationFrame(tick);
       }
 
       resize();
       window.addEventListener("resize", resize);
+      document.addEventListener("visibilitychange", () => {
+        running = !document.hidden;
+        if (running) tick();
+        else cancelAnimationFrame(raf);
+      });
       tick();
     }
 
@@ -1035,8 +1595,172 @@
       });
     });
 
+    function revealOnScroll() {
+      const nodes = document.querySelectorAll(".reveal, .sg-steps-wrap");
+      if (reduced) {
+        nodes.forEach((el) => el.classList.add("in"));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
+      nodes.forEach((el) => io.observe(el));
+    }
+
+    function countUp() {
+      const el = document.querySelector("[data-count]");
+      if (!el) return;
+      const target = parseFloat(el.dataset.count);
+      const decimals = parseInt(el.dataset.decimals || "0", 10);
+      if (reduced) {
+        el.textContent = target.toFixed(decimals);
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        const start = performance.now();
+        const dur = 1400;
+        function frame(now) {
+          const p = Math.min(1, (now - start) / dur);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = (target * eased).toFixed(decimals);
+          if (p < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }, { threshold: 0.2 });
+      io.observe(el);
+    }
+
+    function setupTilt() {
+      if (!finePointer || reduced) return;
+      document.querySelectorAll(".sg-tilt").forEach((card) => {
+        card.addEventListener("mousemove", (e) => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width;
+          const y = (e.clientY - r.top) / r.height;
+          card.style.setProperty("--ry", ((x - 0.5) * 14).toFixed(2) + "deg");
+          card.style.setProperty("--rx", ((0.5 - y) * 10).toFixed(2) + "deg");
+          card.style.setProperty("--spot-x", (x * 100).toFixed(1) + "%");
+          card.style.setProperty("--spot-y", (y * 100).toFixed(1) + "%");
+        });
+        card.addEventListener("mouseleave", () => {
+          card.style.setProperty("--rx", "0deg");
+          card.style.setProperty("--ry", "0deg");
+        });
+      });
+    }
+
+    function setupMagnetic() {
+      if (!finePointer || reduced) return;
+      document.querySelectorAll(".sg-magnetic").forEach((btn) => {
+        btn.addEventListener("mousemove", (e) => {
+          const r = btn.getBoundingClientRect();
+          const dx = (e.clientX - (r.left + r.width / 2)) * 0.28;
+          const dy = (e.clientY - (r.top + r.height / 2)) * 0.28;
+          btn.style.setProperty("--mx", dx.toFixed(1) + "px");
+          btn.style.setProperty("--my", dy.toFixed(1) + "px");
+        });
+        btn.addEventListener("mouseleave", () => {
+          btn.style.setProperty("--mx", "0px");
+          btn.style.setProperty("--my", "0px");
+        });
+      });
+    }
+
+    function setupPointer() {
+      const pointer = document.getElementById("sg-pointer");
+      if (!pointer || !finePointer || reduced) {
+        if (pointer) pointer.style.display = "none";
+        return;
+      }
+      let x = 0, y = 0, tx = 0, ty = 0, lastSpawn = 0;
+      window.addEventListener("mousemove", (e) => {
+        tx = e.clientX;
+        ty = e.clientY;
+        pointer.classList.add("visible");
+        const now = performance.now();
+        if (now - lastSpawn > 70) {
+          lastSpawn = now;
+          const tick = document.createElement("span");
+          tick.className = "sg-tick-fx";
+          tick.textContent = Math.random() > 0.45 ? "▲" : "+";
+          tick.style.left = e.clientX + "px";
+          tick.style.top = e.clientY + "px";
+          document.body.appendChild(tick);
+          setTimeout(() => tick.remove(), 900);
+        }
+      }, { passive: true });
+      document.body.addEventListener("mouseleave", () => pointer.classList.remove("visible"));
+      document.querySelectorAll("a, button").forEach((el) => {
+        el.addEventListener("mouseenter", () => pointer.classList.add("on"));
+        el.addEventListener("mouseleave", () => pointer.classList.remove("on"));
+      });
+      function loop() {
+        x += (tx - x) * 0.18;
+        y += (ty - y) * 0.18;
+        pointer.style.transform = "translate3d(" + x + "px," + y + "px,0)";
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    function setupParallax() {
+      const bg = document.getElementById("hero-bg");
+      if (!bg || reduced) return;
+      let mx = 0, my = 0, tmx = 0, tmy = 0, sy = 0;
+      if (finePointer) {
+        window.addEventListener("mousemove", (e) => {
+          tmx = (e.clientX / window.innerWidth - 0.5) * 18;
+          tmy = (e.clientY / window.innerHeight - 0.5) * 10;
+        }, { passive: true });
+      }
+      window.addEventListener("scroll", () => {
+        sy = window.scrollY;
+      }, { passive: true });
+      function loop() {
+        mx += (tmx - mx) * 0.06;
+        my += (tmy - my) * 0.06;
+        bg.style.transform = "translate3d(" + mx + "px," + (sy * 0.18 + my) + "px,0) scale(1.08)";
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    function setupScrollUI() {
+      const bar = document.getElementById("sg-progress");
+      const nav = document.querySelector(".sg-nav");
+      const links = document.querySelectorAll(".sg-nav-link");
+      const sections = ["about", "buy", "chart", "community"].map((id) => document.getElementById(id));
+      function update() {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const p = max > 0 ? (window.scrollY / max) * 100 : 0;
+        if (bar) bar.style.width = p + "%";
+        if (nav) nav.classList.toggle("scrolled", window.scrollY > 24);
+        let current = "";
+        sections.forEach((sec) => {
+          if (!sec) return;
+          if (window.scrollY >= sec.offsetTop - 140) current = sec.id;
+        });
+        links.forEach((a) => a.classList.toggle("is-active", a.getAttribute("href") === "#" + current));
+      }
+      window.addEventListener("scroll", update, { passive: true });
+      update();
+    }
+
     buildBoard();
     drawCandles();
+    revealOnScroll();
+    countUp();
+    setupTilt();
+    setupMagnetic();
+    setupPointer();
+    setupParallax();
+    setupScrollUI();
     setInterval(flickerBoard, 900);
     let boardTimer;
     window.addEventListener("resize", () => {
